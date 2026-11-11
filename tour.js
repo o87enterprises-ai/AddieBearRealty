@@ -13,12 +13,12 @@
   if (THREE.sRGBEncoding) r.outputEncoding = THREE.sRGBEncoding;
 
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xe9e2d5);
+  scene.background = new THREE.Color(0xb8b0a4);
 
   var cam = new THREE.PerspectiveCamera(68, 1, 0.12, 240);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.62));
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xb7a98e, 0.55));
+  scene.add(new THREE.AmbientLight(0xfff4e8, 0.28));
+  scene.add(new THREE.HemisphereLight(0xfff0d8, 0xa89270, 0.24));
   var sun = new THREE.DirectionalLight(0xfff6e6, 0.5);
   sun.position.set(14, 26, -10); scene.add(sun);
 
@@ -112,7 +112,7 @@
 
     var glass = new THREE.Mesh(
       new THREE.PlaneGeometry(len, head - sill),
-      new THREE.MeshBasicMaterial({ color: 0xdcecf4 })
+      new THREE.MeshStandardMaterial({ color: 0x7daec8, roughness: 0.08, metalness: 0.3, transparent: true, opacity: 0.68 })
     );
     var inner = T / 2 + 0.01;
     if (wn.o === 'h') {
@@ -134,7 +134,7 @@
     if (dr.slider) {
       var g = new THREE.Mesh(
         new THREE.PlaneGeometry(len, 7.1),
-        new THREE.MeshBasicMaterial({ color: 0xd8e8f1 })
+        new THREE.MeshStandardMaterial({ color: 0x7daec8, roughness: 0.08, metalness: 0.3, transparent: true, opacity: 0.68 })
       );
       g.position.set((dr.a + dr.b) / 2, 3.6, T / 2 + 0.02);
       scene.add(g);
@@ -306,7 +306,7 @@
 
   addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { location.href = 'index.html'; return; }
-    if (e.key.indexOf('Arrow') === 0) e.preventDefault();
+    if (e.key.indexOf('Arrow') === 0 || e.code === 'KeyW' || e.code === 'KeyA' || e.code === 'KeyS' || e.code === 'KeyD' || e.code === 'Space') e.preventDefault();
     keys[e.code] = true;
     hideHint();
   });
