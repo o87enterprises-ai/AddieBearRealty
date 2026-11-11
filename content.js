@@ -34,6 +34,11 @@ window.SITE = {
     // Real street-view photo shown at the start of the teardown; it cross-
     // dissolves into the 3D model as you scroll. Empty = start on the model.
     photo: "assets/home-real.jpg",
+    // Photos shown in the "View Listing" overlay. Add local asset paths or
+    // HTTPS URLs. The exterior shot is the fallback if this array is empty.
+    photos: [
+      "assets/home-real.jpg",
+    ],
   },
 
   // ---------------------------------------------------------------------------

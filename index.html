@@ -156,18 +156,43 @@ body.is-pinned header{opacity:0;transform:translateY(-104%);pointer-events:none}
 .dx-expand{position:absolute;right:12px;top:11px;z-index:6;display:inline-flex;align-items:center;gap:6px;pointer-events:none;
   font:500 9px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
   background:color-mix(in srgb,var(--card) 86%,transparent);border:1px solid var(--line);border-radius:999px;padding:8px 12px}
-.dx-close,.dx-tour{display:none}
+.dx-close{display:none}
 .dx-frame.fs{position:fixed;inset:0;transform:none;height:auto;aspect-ratio:auto;border:0;border-radius:0;z-index:9999;cursor:grab}
 .dx-frame.fs #dx-stage{touch-action:none}
 .dx-frame.fs .dx-expand{display:none}
 .dx-frame.fs .dx-close{display:inline-flex}
-.dx-frame.fs .dx-tour{display:inline-flex}
 body.dx-fs{overflow:hidden}
 .dx-close{position:absolute;right:14px;top:14px;z-index:11;width:44px;height:44px;align-items:center;justify-content:center;
   border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--card) 92%,transparent);
   color:var(--ink);font:400 17px/1 var(--sans);cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .dx-close:hover{filter:brightness(1.06)}
-.dx-tour{position:absolute;left:50%;transform:translateX(-50%);bottom:58px;z-index:11;white-space:nowrap}
+/* view listing button — full-screen only, hidden when overlay is open */
+.dx-viewlisting{display:none}
+.dx-frame.fs .dx-viewlisting{display:inline-flex;position:absolute;left:50%;transform:translateX(-50%);bottom:58px;z-index:11;white-space:nowrap}
+.dx-frame.fs.dx-on-listing .dx-viewlisting,.dx-frame.fs.dx-on-listing .hud{display:none}
+/* listing overlay — slides up over the canvas in full-screen */
+.dx-listing{position:absolute;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity .28s ease}
+.dx-frame.fs.dx-on-listing .dx-listing{opacity:1;pointer-events:auto}
+.dx-listing-hdr{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.dx-listing-back{display:flex;align-items:center;gap:7px;padding:13px 18px;font:500 10.5px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink);cursor:pointer;border:0;background:transparent;width:100%;text-align:left}
+.dx-listing-back::before{content:"←";margin-right:3px;font-size:14px}
+.dx-listing-slides{position:relative;min-height:clamp(200px,40vh,420px);background:#111;overflow:hidden;flex-shrink:0}
+.dx-listing-pslide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;will-change:opacity}
+.dx-listing-pslide.on{opacity:1}
+.dx-listing-pdots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:2}
+.dx-listing-pdots button{width:7px;height:7px;border:0;border-radius:999px;background:rgba(255,255,255,.42);cursor:pointer;padding:0;transition:background .2s,transform .2s}
+.dx-listing-pdots button.on{background:#fff;transform:scale(1.3)}
+.dx-listing-body{padding:22px 20px 6px;flex:1}
+.dx-listing-addr{font:600 clamp(16px,2.2vw,21px)/1.25 var(--serif);color:var(--ink);margin:0 0 6px}
+.dx-listing-price{font:700 clamp(22px,3vw,30px)/1.1 var(--sans);color:var(--gold);letter-spacing:.01em;margin:0 0 12px}
+.dx-listing-specs{display:flex;flex-wrap:wrap;gap:5px 14px;font:500 11px/1.4 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.dx-listing-blurb{font:400 15px/1.65 var(--sans);color:var(--ink);max-width:52ch;margin:0 0 12px}
+.dx-listing-feats{list-style:none;margin:0 0 4px;padding:0;display:flex;flex-direction:column;gap:5px}
+.dx-listing-feats li{font:400 14px/1.5 var(--sans);color:var(--mut);padding-left:16px;position:relative}
+.dx-listing-feats li::before{content:"·";position:absolute;left:4px;color:var(--accent)}
+.dx-listing-cta{padding:18px 20px 28px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+@media (min-width:600px){.dx-listing-cta{flex-direction:row;align-items:center}}
+.dx-listing-cta .btn{text-align:center;min-height:48px;flex:1}
 
 @media (min-width:640px){
   header{padding:12px 24px}
@@ -337,10 +362,23 @@ footer{padding:34px var(--pad) 46px;text-align:center;color:var(--mut);font-size
     <img class="dx-photo" id="dx-photo" alt="" hidden>
     <div class="dx-fallback" id="fb"></div>
     <div class="cap" id="dx-cap"></div>
-    <span class="dx-expand" aria-hidden="true">⤢ Explore full screen</span>
+    <span class="dx-expand" aria-hidden="true">⤢ Tap to explore</span>
     <button class="dx-close" id="dx-close" type="button" aria-label="Exit full screen">✕</button>
-    <a class="dx-tour btn" id="dx-tour" href="tour.html">Step inside · 3D tour</a>
-    <div class="hud" id="dx-hud" aria-live="polite" data-idle="Tap to explore in full screen">Tap to explore in full screen</div>
+    <button class="dx-viewlisting btn" id="dx-viewlisting" type="button">View Listing</button>
+    <div class="hud" id="dx-hud" aria-live="polite" data-idle="Scroll to step inside">Scroll to step inside</div>
+    <div class="dx-listing" id="dx-listing" aria-hidden="true">
+      <div class="dx-listing-hdr">
+        <button class="dx-listing-back" id="dx-listing-back" type="button" aria-label="Back to 3D model">Back to model</button>
+      </div>
+      <div class="dx-listing-slides" id="dx-listing-slides">
+        <div class="dx-listing-pdots" id="dx-listing-pdots"></div>
+      </div>
+      <div class="dx-listing-body" id="dx-listing-body"></div>
+      <div class="dx-listing-cta">
+        <a class="btn dx-listing-tour" id="dx-listing-tour" href="tour.html">Take a 3D Tour of this Property</a>
+        <a class="btn btn-ghost dx-listing-ext" id="dx-listing-ext" href="#" target="_blank" rel="noopener noreferrer">View Full Listing ↗</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -470,7 +508,7 @@ footer{padding:34px var(--pad) 46px;text-align:center;color:var(--mut);font-size
     $('tour-body').textContent=S.tour.body;
     $('tour-btn').href=S.tour.url; $('tour-btn2').href=S.tour.url;
     $('tour-btn2').textContent=S.tour.cta;
-    var dxt=$('dx-tour'); if(dxt)dxt.href=S.tour.url;
+    var dxt=$('dx-listing-tour'); if(dxt)dxt.href=S.tour.url;
   }
 
   /* hero background slideshow — same vista photos, darkened, no controls */
@@ -520,6 +558,53 @@ footer{padding:34px var(--pad) 46px;text-align:center;color:var(--mut);font-size
     function go(i){ show(i); schedule(); }
     show(0); schedule();
     document.addEventListener('visibilitychange',function(){ if(document.hidden)clearInterval(timer); else schedule(); });
+  })();
+
+  /* listing overlay — photo slideshow + property info */
+  (function(){
+    var dlslides=$('dx-listing-slides'), dldots=$('dx-listing-pdots'), dlbody=$('dx-listing-body');
+    var dlext=$('dx-listing-ext'), dltour=$('dx-listing-tour');
+    if(dlext&&L.url) dlext.href=L.url;
+    var photos=(L.photos&&L.photos.length)?L.photos:(L.photo?[L.photo]:[]);
+    if(dlslides&&photos.length){
+      var pslides=[],pdotEls=[],pcur=-1,ptimer=null;
+      photos.forEach(function(src,i){
+        var d=document.createElement('div'); d.className='dx-listing-pslide';
+        dlslides.insertBefore(d,dldots);
+        pslides.push(d);
+        if(photos.length>1){
+          var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label','Photo '+(i+1));
+          b.addEventListener('click',function(){ pgo(i); });
+          dldots.appendChild(b); pdotEls.push(b);
+        }
+      });
+      function pshow(i){
+        if(i===pcur)return;
+        pslides[i].style.backgroundImage="url('"+photos[i]+"')";
+        if(pcur>=0){ pslides[pcur].classList.remove('on'); if(pdotEls[pcur])pdotEls[pcur].classList.remove('on'); }
+        pslides[i].classList.add('on'); if(pdotEls[i])pdotEls[i].classList.add('on'); pcur=i;
+      }
+      function pnext(){ pshow((pcur+1)%photos.length); }
+      function pgo(i){ pshow(i); clearInterval(ptimer); if(photos.length>1)ptimer=setInterval(pnext,4200); }
+      pgo(0);
+    }
+    if(dlbody){
+      var addr=document.createElement('p'); addr.className='dx-listing-addr';
+      addr.textContent=L.address+', '+L.city+', '+L.state+' '+L.zip; dlbody.appendChild(addr);
+      var price=document.createElement('p'); price.className='dx-listing-price';
+      price.textContent='$'+L.price.toLocaleString('en-US'); dlbody.appendChild(price);
+      var specs=document.createElement('div'); specs.className='dx-listing-specs';
+      [L.beds+' Bed',L.baths+' Bath',L.sqft+' Sq Ft','Built '+L.built,'HOA $'+L.hoa+'/mo'].forEach(function(t){
+        var s=document.createElement('span'); s.textContent=t; specs.appendChild(s);
+      });
+      dlbody.appendChild(specs);
+      if(L.blurb){ var blurb=document.createElement('p'); blurb.className='dx-listing-blurb'; blurb.textContent=L.blurb; dlbody.appendChild(blurb); }
+      if(L.features&&L.features.length){
+        var ul=document.createElement('ul'); ul.className='dx-listing-feats';
+        L.features.forEach(function(f){ var li=document.createElement('li'); li.textContent=f; ul.appendChild(li); });
+        dlbody.appendChild(ul);
+      }
+    }
   })();
 
   /* hand the plan to house.js / tour.js */

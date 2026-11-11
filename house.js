@@ -596,7 +596,7 @@
       if (s.plan > 0.45) msg = 'Approximate plan · ' + ((L.sqft || '') + ' sq ft');
       else if (s.walls > 0.12) msg = 'Opening the walls';
       else if (s.roof > 0.05) msg = 'Lifting the roof';
-      else msg = fsActive ? 'Drag to rotate · swipe to tear down' : (hud.getAttribute('data-idle') || 'Scroll to step inside');
+      else msg = fsActive ? 'Drag to rotate · swipe to explore' : (hud.getAttribute('data-idle') || 'Scroll to step inside');
       hud.textContent = msg;
     }
 
@@ -633,6 +633,10 @@
   /* ---------- full-screen explorer ---------- */
   var frame = document.getElementById('dx-frame');
   var closeBtn = document.getElementById('dx-close');
+  var viewListingBtn = document.getElementById('dx-viewlisting');
+  var listingBackBtn = document.getElementById('dx-listing-back');
+  var listingEl = document.getElementById('dx-listing');
+  var listingActive = false;
   function enterFS() {
     if (fsActive || !frame) return;
     fsActive = true;
@@ -643,6 +647,7 @@
   }
   function exitFS() {
     if (!fsActive) return;
+    hideListing();
     fsActive = false;
     frame.classList.remove('fs');
     document.body.classList.remove('dx-fs');
@@ -651,8 +656,26 @@
     if (window.ScrollTrigger) ScrollTrigger.update();
     draw();
   }
+  function showListing() {
+    if (!fsActive || listingActive) return;
+    listingActive = true;
+    frame.classList.add('dx-on-listing');
+    if (listingEl) listingEl.setAttribute('aria-hidden', 'false');
+  }
+  function hideListing() {
+    if (!listingActive) return;
+    listingActive = false;
+    frame.classList.remove('dx-on-listing');
+    if (listingEl) listingEl.setAttribute('aria-hidden', 'true');
+  }
   if (closeBtn) closeBtn.addEventListener('click', function (e) { e.stopPropagation(); exitFS(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') exitFS(); });
+  if (viewListingBtn) viewListingBtn.addEventListener('click', function (e) { e.stopPropagation(); showListing(); });
+  if (listingBackBtn) listingBackBtn.addEventListener('click', function (e) { e.stopPropagation(); hideListing(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (listingActive) hideListing();
+    else exitFS();
+  });
 
   /* tap the preview to open full screen; inside, drag to rotate and
      swipe / wheel to run the teardown. */
