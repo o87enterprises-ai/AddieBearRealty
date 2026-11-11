@@ -19,7 +19,8 @@ window.SITE = {
   services: ["Buying", "Selling", "Exploring the market"],
   searchUrl: "https://adriannawigzell.exprealty.com/",
   social: {},                      // live site has Facebook, LinkedIn, Instagram icons; paste the URLs here
-  accent: "#0a2a66",
+  accent: "#c9922e",      // bright gold: page accent, warm beside brick and navy
+  blueprint: "#0a2a66",   // blueprint paper colour inside the 3D scene
   rooms: ["Foyer", "Great Room", "Chef's Kitchen", "Formal Dining", "Primary Suite", "Spa Bath", "Bedroom 2", "Bedroom 3"],
   disclaimer: "All information provided is deemed reliable but is not guaranteed and should be independently verified. Listing data comes in part from the IDX program of RMLS™ of Portland, Oregon. Some properties which appear for sale may subsequently have sold or may no longer be available.",
 };
