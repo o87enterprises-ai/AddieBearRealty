@@ -146,10 +146,10 @@ body.is-pinned header{opacity:0;transform:translateY(-104%);pointer-events:none}
   background:color-mix(in srgb,var(--card) 90%,transparent);border:1px solid var(--line);
   border-radius:999px;padding:9px 16px;z-index:6
 }
-.cap{position:absolute;left:16px;top:14px;z-index:6;font:400 9px/1.3 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);opacity:.75}
+.cap{position:absolute;left:16px;top:14px;z-index:6;font:400 9px/1.3 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#fff;opacity:.9;text-shadow:0 1px 4px rgba(0,0,0,.7)}
 
 /* real listing photo that cross-dissolves into the 3D model on scroll */
-.dx-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:3;pointer-events:none;opacity:1;will-change:opacity,transform}
+.dx-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 68%;z-index:3;pointer-events:none;opacity:1;will-change:opacity,transform}
 
 /* tap the teardown to open it full screen and explore */
 .dx-frame{cursor:zoom-in}
@@ -677,7 +677,6 @@ footer{padding:34px var(--pad) 46px;text-align:center;color:var(--mut);font-size
         el.className='row';
         var hd=document.createElement('div'); hd.className='row-head';
         var ts=document.createElement('span'); ts.className='demo-tag'; ts.className+=' '+rw.tagsClass||''; ts.textContent=rw.eyebrow;
-        hd.appendChild(document.createTextNode(rw.eyebrow));
         hd.appendChild(ts);
         el.appendChild(hd);
 

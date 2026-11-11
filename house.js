@@ -7,7 +7,7 @@
   gsap.registerPlugin(ScrollTrigger);
 
   var S = window.SITE, F = S.floor, L = S.listing || {};
-  var W = F.width, D = F.depth, H = 8.4, T = 0.55;
+  var W = F.width, D = F.depth, H = 16.5, H1 = 8.4, T = 0.55;
   var accent = S.blueprint || '#0a2a66';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -17,7 +17,7 @@
 
   var scene = new THREE.Scene();
   var cam = new THREE.PerspectiveCamera(34, 1, 0.5, 900);
-  cam.position.set(W / 2 + 50, 36, D / 2 + 62);
+  cam.position.set(W / 2 + 50, 50, D / 2 + 62);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7a5c, 1.0));
   var sun = new THREE.DirectionalLight(0xfff3e0, 0.9);
@@ -286,12 +286,17 @@
   (F.windows || []).forEach(function (wn) {
     var side = wn.o === 'h' ? (wn.at === 0 ? 0 : 1) : (wn.at === 0 ? 2 : 3);
     var sill = wn.sill || 3, head = wn.head || 7;
+    // first floor: below window + between window head and floor 2
     fillPiece(side, wn.a, wn.b, 0, sill);
-    fillPiece(side, wn.a, wn.b, head, H - head);
+    fillPiece(side, wn.a, wn.b, head, H1 - head);
+    // second floor: spandrel + above window 2
+    var sill2 = H1 + sill, head2 = H1 + head;
+    fillPiece(side, wn.a, wn.b, H1, sill);        // spandrel below window 2
+    fillPiece(side, wn.a, wn.b, head2, H - head2); // above window 2
   });
   (F.doors || []).forEach(function (dr) {
-    if (dr.slider) fillPiece(0, dr.a, dr.b, 7.2, H - 7.2);
-    if (dr.front) fillPiece(1, dr.a, dr.b, 7.25, H - 7.25);
+    if (dr.slider) { fillPiece(0, dr.a, dr.b, 7.2, H1 - 7.2); fillPiece(0, dr.a, dr.b, H1, H - H1); }
+    if (dr.front) { fillPiece(1, dr.a, dr.b, 7.25, H1 - 7.25); fillPiece(1, dr.a, dr.b, H1, H - H1); }
   });
 
   /* openings: glass + frames, fading with the shell */
@@ -330,6 +335,21 @@
   }
 
   (F.windows || []).forEach(addWindow);
+
+  // Second-floor windows at the same horizontal positions, raised by H1
+  (F.windows || []).forEach(function (wn) {
+    addWindow({ o: wn.o, at: wn.at, a: wn.a, b: wn.b, sill: H1 + (wn.sill || 3), head: H1 + (wn.head || 7) });
+  });
+
+  // Floor band separating story 1 from story 2
+  var bandMat = new THREE.MeshStandardMaterial({ color: 0xd4cfc5, roughness: 0.9, transparent: true });
+  ext.forEach(function (w) {
+    var base = w.g.children[0];
+    var len = base.geometry.parameters.width;
+    var band = new THREE.Mesh(new THREE.BoxGeometry(len + 0.08, 0.72, T + 0.1), bandMat);
+    band.position.y = H1 + 0.36;
+    w.g.add(band);
+  });
 
   function addSlider(dr) {
     var len = dr.b - dr.a, hh = 7.2;
@@ -538,7 +558,7 @@
      the roof rises, the carport and plantings sit outside. So the camera is fitted
      to the live extents every frame instead of a fixed distance — it pulls back
      until all eight corners of the box clear a margin, and nothing gets clipped. */
-  var SLIDE = 14, LIFT = 9, MARGIN = 0.94;
+  var SLIDE = 14, LIFT = 16, MARGIN = 0.94;
   var P1 = new THREE.Vector3(), P2 = new THREE.Vector3();
 
   function fit(az, elev) {
