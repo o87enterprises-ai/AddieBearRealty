@@ -77,10 +77,8 @@ header b{font:600 14px/1.15 var(--serif);letter-spacing:.2em;text-transform:uppe
   display:flex;flex-direction:column;align-items:center;text-align:center
 }
 
-.explogo{display:block;margin:0 auto;width:clamp(178px,13.5vw,268px);height:auto;aspect-ratio:3/1;color:var(--ink);opacity:.94;overflow:visible}
-.explogo text{fill:currentColor;font-family:var(--sans)}
-.explogo .lg-main{font-size:33px;font-weight:500;letter-spacing:-1.6px}
-.explogo .lg-sub{font-size:10px;font-weight:500;letter-spacing:4.6px}
+.explogo{display:block;margin:0 auto;width:clamp(214px,17vw,320px);height:auto;aspect-ratio:241/125;object-fit:contain;opacity:.96}
+@media (prefers-color-scheme:dark){.explogo{filter:brightness(0) invert(1)}}
 
 .face{
   --sz:clamp(96px,8.6vw,150px);
@@ -251,10 +249,7 @@ footer{padding:34px var(--pad) 46px;text-align:center;color:var(--mut);font-size
 <main>
 <section class="hero" id="hero">
   <div class="hero-in">
-    <svg class="explogo" viewBox="0 0 150 50" role="img" aria-label="eXp Realty">
-      <text class="lg-main" x="0" y="31">exp</text>
-      <text class="lg-sub" x="1.5" y="46">REALTY</text>
-    </svg>
+    <img class="explogo" src="assets/exp-realty.png" alt="eXp Realty" width="241" height="125">
 
     <div class="face">
       <span id="face-mono" aria-hidden="true">AW</span>
