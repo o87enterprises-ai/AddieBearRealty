@@ -75,6 +75,24 @@ window.SITE = {
     ],
   },
 
+  // Ambient lifestyle slideshow — decorative stock photos (not listings).
+  // Crossfades slowly behind a short caption. Edit/reorder freely.
+  vista: {
+    eyebrow: "A life with a view",
+    title: "Million-dollar views, from the comfort of home",
+    sub: "Coast, city, and country — the Oregon lifestyle, framed by the right front door.",
+    interval: 5200,
+    slides: [
+      { src: "assets/vista/01-home-dusk.jpg",      label: "Architectural home at dusk" },
+      { src: "assets/vista/02-alpine-view.jpg",    label: "Alpine sunrise above the clouds" },
+      { src: "assets/vista/03-bright-interior.jpg",label: "Open living, wall of glass" },
+      { src: "assets/vista/04-city-golden.jpg",    label: "City skyline, golden hour" },
+      { src: "assets/vista/05-pool-villa.jpg",     label: "Poolside villa" },
+      { src: "assets/vista/06-valley-meadow.jpg",  label: "Valley meadow at first light" },
+      { src: "assets/vista/07-home-sunset.jpg",    label: "Country estate, sunset" },
+    ],
+  },
+
   tour: {
     url: "tour.html",
     eyebrow: "3D walkthrough",
