@@ -512,6 +512,7 @@
   /* ---------------- camera + scroll ---------------- */
   var s = { roof: 0, walls: 0, plan: 0, orbit: 0, dragAz: 0, dragEl: 0 };
   var hud = document.getElementById('dx-hud');
+  var fsActive = false, fsP = 0;
 
   function size() {
     var el = c.parentNode || c;
@@ -591,10 +592,11 @@
     bp.material.opacity = Math.max(0, Math.min(1, (s.plan - 0.12) / 0.5));
 
     if (hud) {
-      var msg = hud.getAttribute('data-idle') || 'Scroll to step inside';
+      var msg;
       if (s.plan > 0.45) msg = 'Approximate plan · ' + ((L.sqft || '') + ' sq ft');
       else if (s.walls > 0.12) msg = 'Opening the walls';
       else if (s.roof > 0.05) msg = 'Lifting the roof';
+      else msg = fsActive ? 'Drag to rotate · swipe to tear down' : (hud.getAttribute('data-idle') || 'Scroll to step inside');
       hud.textContent = msg;
     }
 
@@ -605,60 +607,101 @@
   if (window.ResizeObserver) new ResizeObserver(function () { size(); draw(); }).observe(c.parentNode || c);
   else window.addEventListener('resize', function () { size(); draw(); });
 
-  /* desktop: click-drag to orbit the model; scroll still drives the teardown.
-     Touch devices keep pan-y scrolling (set in CSS) and skip this entirely. */
-  var canOrbit = !reduce && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (canOrbit) {
-    var drag = { on: false, px: 0, py: 0 };
+  /* One 0..1 progress maps to all teardown stages, so the scroll pin and the
+     full-screen explorer share identical timing. p≈0 shows the real listing
+     photo, which cross-dissolves into the intact 3D model as you scroll in. */
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function eIO(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+  function eSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+  var dxPhoto = document.getElementById('dx-photo');
+  var photoOn = dxPhoto && dxPhoto.getAttribute('data-on') === '1';
+  function setProgress(p) {
+    p = clamp01(p);
+    var t = p * 40;
+    s.roof  = eIO(clamp01((t - 4.5) / 18));
+    s.walls = eIO(clamp01((t - 9) / 20));
+    s.plan  = eIO(clamp01((t - 18) / 22));
+    s.orbit = eSine(clamp01((t - 13) / 27));
+    if (photoOn) {
+      var pv = 1 - clamp01(p / 0.10);
+      dxPhoto.style.opacity = pv;
+      dxPhoto.style.transform = 'scale(' + (1 + (1 - pv) * 0.05) + ')';
+    }
+    draw();
+  }
+
+  /* ---------- full-screen explorer ---------- */
+  var frame = document.getElementById('dx-frame');
+  var closeBtn = document.getElementById('dx-close');
+  function enterFS() {
+    if (fsActive || !frame) return;
+    fsActive = true;
+    frame.classList.add('fs');
+    document.body.classList.add('dx-fs');
     c.style.cursor = 'grab';
-    c.style.touchAction = 'none';
-    if (hud) hud.setAttribute('data-idle', 'Scroll to step inside · drag to look around');
+    size(); draw();
+  }
+  function exitFS() {
+    if (!fsActive) return;
+    fsActive = false;
+    frame.classList.remove('fs');
+    document.body.classList.remove('dx-fs');
+    c.style.cursor = '';
+    size();
+    if (window.ScrollTrigger) ScrollTrigger.update();
+    draw();
+  }
+  if (closeBtn) closeBtn.addEventListener('click', function (e) { e.stopPropagation(); exitFS(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') exitFS(); });
+
+  /* tap the preview to open full screen; inside, drag to rotate and
+     swipe / wheel to run the teardown. */
+  if (!reduce) {
+    var pd = { on: false, x: 0, y: 0, px: 0, py: 0, t: 0, moved: false };
     c.addEventListener('pointerdown', function (e) {
-      if (e.button !== 0) return;
-      drag.on = true; drag.px = e.clientX; drag.py = e.clientY;
-      c.style.cursor = 'grabbing';
-      try { c.setPointerCapture(e.pointerId); } catch (_) {}
+      pd.on = true; pd.x = pd.px = e.clientX; pd.y = pd.py = e.clientY;
+      pd.t = Date.now(); pd.moved = false;
+      if (fsActive) { c.style.cursor = 'grabbing'; try { c.setPointerCapture(e.pointerId); } catch (_) {} }
     });
     c.addEventListener('pointermove', function (e) {
-      if (!drag.on) return;
-      s.dragAz += (e.clientX - drag.px) * 0.006;
-      s.dragEl = Math.max(-0.5, Math.min(0.95, s.dragEl - (e.clientY - drag.py) * 0.005));
-      drag.px = e.clientX; drag.py = e.clientY;
-      draw();
+      if (!pd.on) return;
+      if (Math.abs(e.clientX - pd.x) + Math.abs(e.clientY - pd.y) > 8) pd.moved = true;
+      if (fsActive) {
+        s.dragAz += (e.clientX - pd.px) * 0.006;
+        fsP = clamp01(fsP + (e.clientY - pd.py) * 0.0018);
+        pd.px = e.clientX; pd.py = e.clientY;
+        setProgress(fsP);
+      }
     });
-    function endDrag(e) {
-      if (!drag.on) return;
-      drag.on = false; c.style.cursor = 'grab';
-      try { c.releasePointerCapture(e.pointerId); } catch (_) {}
-    }
-    c.addEventListener('pointerup', endDrag);
-    c.addEventListener('pointercancel', endDrag);
-    c.addEventListener('pointerleave', endDrag);
+    var pend = function (e) {
+      if (!pd.on) return;
+      pd.on = false;
+      if (fsActive) { c.style.cursor = 'grab'; try { c.releasePointerCapture(e.pointerId); } catch (_) {} }
+      else if (!pd.moved && Date.now() - pd.t < 500) enterFS();
+    };
+    c.addEventListener('pointerup', pend);
+    c.addEventListener('pointercancel', function () { pd.on = false; });
+    c.addEventListener('wheel', function (e) {
+      if (!fsActive) return;
+      e.preventDefault();
+      fsP = clamp01(fsP + (e.deltaY > 0 ? 0.045 : -0.045));
+      setProgress(fsP);
+    }, { passive: false });
   }
 
   if (reduce) {
-    s.roof = 1; s.walls = 1; s.plan = 1; s.orbit = 0.4;
-    draw();
+    setProgress(1);
   } else {
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '#dx-pin',
-        start: 'top top',
-        end: '+=240%',
-        scrub: 0.6,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onToggle: function (self) {
-          document.body.classList.toggle('is-pinned', self.isActive);
-        }
-      },
-      onUpdate: draw
+    ScrollTrigger.create({
+      trigger: '#dx-pin',
+      start: 'top top',
+      end: '+=240%',
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: function (self) { if (!fsActive) { fsP = self.progress; setProgress(self.progress); } },
+      onToggle: function (self) { document.body.classList.toggle('is-pinned', self.isActive); }
     });
-    tl.to(s, { roof: 1, duration: 20, ease: 'power2.inOut' }, 0)
-      .to(s, { walls: 1, duration: 22, ease: 'power2.inOut' }, 4)
-      .to(s, { plan: 1, duration: 26, ease: 'power2.inOut' }, 14)
-      .to(s, { orbit: 1, duration: 30, ease: 'sine.inOut' }, 10);
-    draw();
+    setProgress(0);
   }
 })();

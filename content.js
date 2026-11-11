@@ -31,6 +31,9 @@ window.SITE = {
       "HOA covers water, sewer, cable, internet",
     ],
     url: "https://adriannawigzell.exprealty.com/property/65-355146663-11490-sw-crown-dr-2-king-city-OR-97224",
+    // Real street-view photo shown at the start of the teardown; it cross-
+    // dissolves into the 3D model as you scroll. Empty = start on the model.
+    photo: "assets/home-real.jpg",
   },
 
   // ---------------------------------------------------------------------------
