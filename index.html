@@ -45,7 +45,7 @@ f.forEach(function(x){var d=document.createElement('div');d.textContent=x.name+'
 S.about.forEach(function(x){var p=document.createElement('p');p.textContent=x;$('about-t').append(p)});
 S.services.forEach(function(s){var d=document.createElement('div');d.className='card';d.textContent=s;$('svc').append(d)});
 if(S.areas.length){$('areas').hidden=false;t($('areas-t'),S.areas.join(' · '))}
-if(S.testimonials.length){$('proof').hidden=false;S.testimonials.forEach(function(x){var d=document.createElement('div');d.className='card';d.textContent='“'+x.quote+'” — '+x.by;$('tst').append(d)})}
+S.testimonials=S.testimonials||[];if(S.testimonials.length){$('proof').hidden=false;S.testimonials.forEach(function(x){var d=document.createElement('div');d.className='card';d.textContent='“'+x.quote+'” — '+x.by;$('tst').append(d)})}
 var ct=$('contact-t');if(S.officePhone){var o=document.createElement('p');o.textContent='Office: '+S.officePhone;ct.after(o)}var sr=document.createElement('a');sr.className='btn';sr.href=S.searchUrl;sr.textContent='Search homes';ct.after(sr);if(S.phone){var a=document.createElement('a');a.href='tel:'+S.phone.replace(/[^\d+]/g,'');a.textContent=S.phone;ct.append(a,' ')}
 if(S.email){var m=document.createElement('a');m.href='mailto:'+S.email;m.textContent=S.email;ct.append(m)}
 
