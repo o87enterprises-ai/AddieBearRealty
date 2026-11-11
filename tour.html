@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0f13">
+<title>3D walkthrough · 11490 SW Crown Dr #2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+:root{
+  --gold:#e0a93f;--gold-ink:#241903;--ink:#f7f1e5;--mut:#b7ac98;
+  --sans:'Jost',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Cormorant Garamond',ui-serif,Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:#0d0f13;color:var(--ink);overflow:hidden;
+  font:400 15px/1.5 var(--sans);
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#scene:active{cursor:grabbing}
+button{font-family:inherit;color:inherit}
+
+.t-top{
+  position:fixed;top:0;left:0;right:0;z-index:6;display:flex;align-items:center;gap:10px;
+  padding:10px 12px 22px;background:linear-gradient(180deg,rgba(8,10,14,.86) 30%,rgba(8,10,14,0))
+}
+.t-back{
+  display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:2px;
+  background:rgba(255,255,255,.1);text-decoration:none;color:var(--ink);
+  font:500 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap
+}
+.t-back:hover{background:rgba(255,255,255,.18)}
+.t-addr{min-width:0;flex:1}
+.t-addr b{display:block;font:600 13px/1.2 var(--sans);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-addr span{display:block;font:500 8.5px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-room{
+  display:none;font:500 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--gold);color:var(--gold-ink);padding:9px 14px;border-radius:2px;white-space:nowrap
+}
+
+.t-map{
+  position:fixed;right:10px;top:64px;z-index:5;width:150px;height:113px;
+  border:1px solid rgba(255,255,255,.16);border-radius:3px;background:rgba(9,12,18,.8);
+  box-shadow:0 12px 30px -18px #000
+}
+.t-tools{position:fixed;right:10px;bottom:10px;z-index:6;display:flex;gap:6px}
+.t-btn{
+  height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.18);border-radius:2px;
+  background:rgba(12,15,21,.82);color:var(--ink);cursor:pointer;
+  font:500 9.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;
+  display:inline-flex;align-items:center
+}
+.t-btn:hover{background:rgba(255,255,255,.14)}
+.t-btn[aria-pressed="false"]{opacity:.62}
+.t-exit{background:var(--gold);color:var(--gold-ink);border-color:transparent;font-weight:600}
+.t-exit:hover{background:#efbd5c}
+
+.t-move{
+  position:fixed;left:10px;bottom:10px;z-index:6;display:grid;
+  grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,46px);gap:4px;opacity:.94
+}
+.t-move button{
+  border:1px solid rgba(255,255,255,.16);border-radius:3px;background:rgba(12,15,21,.78);
+  color:var(--ink);font-size:15px;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  touch-action:none;user-select:none;-webkit-user-select:none
+}
+.t-move button:active{background:rgba(224,169,63,.55)}
+.t-move .up{grid-column:2;grid-row:1}
+.t-move .left{grid-column:1;grid-row:2}
+.t-move .down{grid-column:2;grid-row:2}
+.t-move .right{grid-column:3;grid-row:2}
+
+.t-hint{
+  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:5;
+  font:500 8.5px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--mut);
+  white-space:nowrap;pointer-events:none;transition:opacity .6s
+}
+.t-hint.gone{opacity:0}
+
+.t-start{
+  position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:22px;
+  background:radial-gradient(80% 70% at 50% 40%,rgba(12,15,21,.86),rgba(8,10,14,.96));
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)
+}
+.t-start[hidden]{display:none}
+.t-card{max-width:440px;text-align:center}
+.t-eyebrow{margin:0;font:500 9.5px/1.4 var(--sans);letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+.t-card h1{margin:10px 0 0;font:600 clamp(34px,9vw,52px)/1.02 var(--serif);letter-spacing:-.01em}
+.t-card p{margin:14px 0 0;color:var(--mut);font-size:14.5px;line-height:1.6}
+.t-card .btn{
+  display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 26px;margin-top:22px;
+  border:0;border-radius:2px;background:var(--gold);color:var(--gold-ink);cursor:pointer;
+  font:600 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase
+}
+.t-note{margin-top:18px!important;font-size:11px!important;letter-spacing:.06em;opacity:.72}
+.t-keys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:16px}
+.t-keys span{
+  border:1px solid rgba(255,255,255,.2);border-radius:2px;padding:5px 9px;
+  font:500 9px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)
+}
+@media (min-width:820px){
+  .t-top{padding:14px 20px 26px}
+  .t-room{display:inline-flex}
+  .t-map{width:200px;height:150px;top:74px;right:16px}
+  .t-tools{right:16px;bottom:16px}
+  .t-move{display:none}
+  .t-hint{bottom:18px}
+}
+@media (max-height:520px){
+  .t-map{display:none}
+  .t-card p{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="3D walkthrough of the condo interior"></canvas>
+
+<header class="t-top">
+  <a class="t-back" href="index.html">&larr; Site</a>
+  <div class="t-addr">
+    <b id="t-addr">11490 SW Crown Dr #2</b>
+    <span id="t-sub">King City, OR · approximate layout</span>
+  </div>
+  <div class="t-room" id="t-room" aria-live="polite">Living Room</div>
+</header>
+
+<canvas class="t-map" id="minimap" aria-hidden="true"></canvas>
+
+<div class="t-move" id="move" aria-hidden="true">
+  <button class="up" data-k="f" aria-label="Walk forward">&#9650;</button>
+  <button class="left" data-k="l" aria-label="Step left">&#9664;</button>
+  <button class="down" data-k="b" aria-label="Walk backward">&#9660;</button>
+  <button class="right" data-k="r" aria-label="Step right">&#9654;</button>
+</div>
+
+<div class="t-tools">
+  <button class="t-btn" id="btn-plan" aria-pressed="true">Plan</button>
+  <button class="t-btn" id="btn-reset">Reset</button>
+  <a class="t-btn t-exit" href="index.html">Exit tour</a>
+</div>
+
+<div class="t-hint" id="hint">Drag to look · WASD / arrows to move · Shift to run</div>
+
+<div class="t-start" id="start">
+  <div class="t-card">
+    <p class="t-eyebrow">3D walkthrough</p>
+    <h1>Step inside</h1>
+    <p>One bedroom, one bath, 771 square feet — walk the whole floor plan. Drag to look around, and use the keys to move.</p>
+    <div class="t-keys"><span>W A S D</span><span>Arrows</span><span>Shift = run</span><span>Drag = look</span></div>
+    <button class="btn" id="go">Start walking</button>
+    <p class="t-note">Approximate layout built from the listing and the published square footage — not a measured survey.</p>
+  </div>
+</div>
+
+<script src="content.js"></script>
+<script src="plan.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="tour.js"></script>
+</body>
+</html>
