@@ -23,10 +23,10 @@ footer{text-align:center;color:var(--mut);padding:40px 24px;font-size:13px}
 <header><b id="brand"></b><a class="btn" id="cta" href="#contact">Contact</a></header>
 <section id="dx-pin" class="dx">
  <canvas id="dx-stage" aria-hidden="true"></canvas><div class="dx-fallback" id="fb" aria-hidden="true"></div>
- <div class="dx-copy"><p class="eyebrow">Inside the home</p><h1 id="h1"></h1></div>
+ <div class="dx-copy"><p class="eyebrow" id="eyebrow">Inside the home</p><h1 id="h1"></h1></div>
  <div id="dx-hud" class="dx-hud" aria-live="polite" data-idle="Scroll to step inside">Scroll to step inside</div>
 </section>
-<section class="s" id="about"><h2>About</h2><p id="about-t"></p></section>
+<section class="s" id="about"><h2>About</h2><div id="about-t"></div></section>
 <section class="s" id="services"><h2>How I help</h2><div class="grid" id="svc"></div></section>
 <section class="s" id="areas" hidden><h2>Areas served</h2><p id="areas-t"></p></section>
 <section class="s" id="proof" hidden><h2>Kind words</h2><div class="grid" id="tst"></div></section>
@@ -37,19 +37,19 @@ footer{text-align:center;color:var(--mut);padding:40px 24px;font-size:13px}
 (function(){var S=window.SITE,$=function(i){return document.getElementById(i)},t=function(el,v){el.textContent=v};
 function esc(v){return String(v)}
 document.documentElement.style.setProperty('--accent',S.accent);
-t($('brand'),S.name);document.title=S.name+' | '+S.brokerage;
+t($('brand'),S.name);document.title=S.name+' | '+S.brokerage;$('eyebrow').textContent=S.title+' · '+S.brokerage;
 var w=S.tagline.split(' '),last=w.pop();$('h1').innerHTML='';$('h1').append(w.join(' ')+' ');var em=document.createElement('em');em.textContent=last;$('h1').append(em,'.');
 var c=$('dx-stage'),f=[{name:'Upper floor',rooms:S.rooms.slice(4,8)},{name:'Main floor',rooms:S.rooms.slice(0,4)}];
 c.setAttribute('data-floors',JSON.stringify(f));c.setAttribute('data-accent',S.accent);
 f.forEach(function(x){var d=document.createElement('div');d.textContent=x.name+': '+x.rooms.join(', ');$('fb').append(d)});
-t($('about-t'),S.about);
+S.about.forEach(function(x){var p=document.createElement('p');p.textContent=x;$('about-t').append(p)});
 S.services.forEach(function(s){var d=document.createElement('div');d.className='card';d.textContent=s;$('svc').append(d)});
 if(S.areas.length){$('areas').hidden=false;t($('areas-t'),S.areas.join(' · '))}
 if(S.testimonials.length){$('proof').hidden=false;S.testimonials.forEach(function(x){var d=document.createElement('div');d.className='card';d.textContent='“'+x.quote+'” — '+x.by;$('tst').append(d)})}
-var ct=$('contact-t');if(S.phone){var a=document.createElement('a');a.href='tel:'+S.phone.replace(/[^\d+]/g,'');a.textContent=S.phone;ct.append(a,' ')}
+var ct=$('contact-t');if(S.officePhone){var o=document.createElement('p');o.textContent='Office: '+S.officePhone;ct.after(o)}var sr=document.createElement('a');sr.className='btn';sr.href=S.searchUrl;sr.textContent='Search homes';ct.after(sr);if(S.phone){var a=document.createElement('a');a.href='tel:'+S.phone.replace(/[^\d+]/g,'');a.textContent=S.phone;ct.append(a,' ')}
 if(S.email){var m=document.createElement('a');m.href='mailto:'+S.email;m.textContent=S.email;ct.append(m)}
-if(!S.phone&&!S.email)ct.textContent='Contact details coming soon.';
-t($('foot'),S.name+' · '+S.brokerage+(S.license?' · '+S.license:''));
+
+t($('foot'),S.name+' · '+S.title+' · '+S.brokerage+'. '+S.disclaimer+' Equal Housing Opportunity.');
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
