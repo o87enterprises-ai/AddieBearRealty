@@ -1,24 +1,26 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Adrianna Wigzell | eXp Realty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap">
 <style>
 :root{--bg:#f7f8fb;--ink:#14181f;--mut:#5b6472;--accent:#0a2a66;--card:#fff;--line:#dde2ea}
 @media(prefers-color-scheme:dark){:root{--bg:#0e1116;--ink:#eef1f6;--mut:#9aa4b2;--card:#161b22;--line:#262d38}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:300 17px/1.7 'Jost',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 header{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;position:fixed;inset:0 0 auto;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(8px)}
-header b{font-family:Georgia,serif;letter-spacing:.08em;text-transform:uppercase}
-.btn{background:var(--accent);color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:600}
+header b{font:400 20px 'Cormorant Garamond',Georgia,serif;letter-spacing:.28em;text-transform:uppercase}
+.btn{background:var(--accent);color:#fff;padding:11px 26px;border-radius:2px;text-decoration:none;font:500 12px 'Jost',sans-serif;letter-spacing:.22em;text-transform:uppercase;display:inline-block;margin:6px 8px 6px 0}
 .dx{position:relative;height:100vh;min-height:560px;overflow:hidden;background:radial-gradient(70% 60% at 50% 40%,var(--card),var(--bg))}
 #dx-stage{position:absolute;inset:0;width:100%;height:100%;display:none}.js3d #dx-stage{display:block}.js3d .dx-fallback{display:none}
-.dx-fallback{position:absolute;inset:0;display:grid;place-content:center;gap:8px;padding-top:140px;font:13px monospace}
-.dx-fallback div{background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px}
+.dx-fallback{position:absolute;inset:0;display:grid;place-content:center;gap:8px;padding-top:140px;font:400 13px 'Jost',sans-serif;letter-spacing:.12em}
+.dx-fallback div{background:var(--accent);color:#fff;padding:10px 16px;border-radius:2px}
 .dx-copy{position:absolute;left:0;right:0;top:12vh;text-align:center;padding:0 24px;pointer-events:none}
-.eyebrow{font:12px monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-h1{font-size:clamp(40px,8vw,88px);line-height:1;margin:8px auto;max-width:900px}h1 em{font-family:Georgia,serif;color:var(--accent)}
-.dx-hud{position:absolute;left:24px;bottom:24px;font:12px monospace;letter-spacing:.14em;text-transform:uppercase;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
-section.s{max-width:900px;margin:0 auto;padding:72px 24px}h2{font-family:Georgia,serif;font-size:34px;margin:0 0 12px}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-footer{text-align:center;color:var(--mut);padding:40px 24px;font-size:13px}
+.eyebrow{font:400 12px 'Jost',sans-serif;letter-spacing:.38em;text-transform:uppercase;color:var(--accent)}
+h1{font:300 clamp(40px,7.5vw,92px)/1.02 'Cormorant Garamond',Georgia,serif;letter-spacing:-.01em;margin:10px auto;max-width:900px}h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.dx-hud{position:absolute;left:24px;bottom:24px;font:400 11px 'Jost',sans-serif;letter-spacing:.24em;text-transform:uppercase;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+section.s{max-width:900px;margin:0 auto;padding:72px 24px}h2{font:300 44px/1.1 'Cormorant Garamond',Georgia,serif;margin:0 0 16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:20px 22px;letter-spacing:.04em}
+footer{text-align:center;color:var(--mut);padding:40px 24px;font-size:12px;letter-spacing:.06em}
 </style></head><body>
 <header><b id="brand"></b><a class="btn" id="cta" href="#contact">Contact</a></header>
 <section id="dx-pin" class="dx">

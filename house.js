@@ -24,9 +24,9 @@ function blueprint(f){var e=cv(1200,800),g=e.getContext('2d');
  g.strokeStyle='#fff';g.lineWidth=10;g.strokeRect(30,30,1140,740);g.lineWidth=5;g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';
  plan.forEach(function(p,k){var x=30+p[0]*1140,y=30+p[1]*740,w=p[2]*1140,h=p[3]*740;g.strokeRect(x,y,w,h);
   g.clearRect(x+w/2-40,y+h-3,80,6);g.fillStyle='#fff';
-  var n=(f.rooms[k]||'').toUpperCase();if(n){g.font='600 46px monospace';g.fillText(n,x+w/2,y+h/2-10,w-40);
-  g.font='28px monospace';g.globalAlpha=.7;g.fillText(Math.round(p[2]*W*3.28*1.6)+"' x "+Math.round(p[3]*D*3.28*1.6)+"'",x+w/2,y+h/2+38);g.globalAlpha=1;}});
- g.font='600 30px monospace';g.textAlign='left';g.fillText(f.name.toUpperCase(),48,800-58);
+  var n=(f.rooms[k]||'').toUpperCase();if(n){g.font='600 46px Jost,sans-serif';g.fillText(n,x+w/2,y+h/2-10,w-40);
+  g.font='28px Jost,sans-serif';g.globalAlpha=.7;g.fillText(Math.round(p[2]*W*3.28*1.6)+"' x "+Math.round(p[3]*D*3.28*1.6)+"'",x+w/2,y+h/2+38);g.globalAlpha=1;}});
+ g.font='600 30px Jost,sans-serif';g.textAlign='left';g.fillText(f.name.toUpperCase(),48,800-58);
  return new THREE.CanvasTexture(e);}
 var house=new THREE.Group();scene.add(house);
 var levels=floors.map(function(f,i){var lv=new THREE.Group();house.add(lv);
@@ -48,7 +48,7 @@ function size(){var w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;r.setSize(
 var s={roof:0,walls:0,split:0,orbit:0},hud=document.getElementById('dx-hud');
 function draw(){
  var a=0.6+s.orbit*(120*Math.PI/180),R=15+s.split*3;
- cam.position.set(Math.sin(a)*R,5+s.split*6+s.orbit*2,Math.cos(a)*R);cam.lookAt(0,0.5+s.split*1.5,0);
+ cam.position.set(Math.sin(a)*R,5+s.split*6+s.orbit*2,Math.cos(a)*R);cam.lookAt(0,1.7+s.split*1.5,0);
  levels.forEach(function(l){var j=n-1-l.i;l.g.position.y=j*(H+0.14)+j*s.split*2.6-stack/2;
   l.walls.forEach(function(m){var o=m.userData.out;m.position.x=(m.rotation.y?Math.sign(o.x)*W/2:0)+o.x*s.walls*2.4;
    m.position.z=(m.rotation.y?0:Math.sign(o.z)*D/2)+o.z*s.walls*2.4;var op=1-s.walls*0.92;m.material.opacity=op;
