@@ -7,7 +7,7 @@ window.SITE = {
   tagline: "Real estate that feels clear and manageable",
 
   // Drop a square-ish portrait here, e.g. "assets/adrianna.jpg". Empty = gold monogram.
-  headshot: "",
+  headshot: "assets/adrianna.png",
 
   listing: {
     mls: "355146663",
